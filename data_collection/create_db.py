@@ -1,6 +1,11 @@
+import sys
 import sqlite3
 
-DB_NAME = "user_data_2.db"
+if len(sys.argv) > 1:
+	DB_NAME = sys.argv[1]
+else:
+	DB_NAME = "test_data.db"
+
 conn = sqlite3.connect("data/{}".format(DB_NAME))
 db   = conn.cursor()
 

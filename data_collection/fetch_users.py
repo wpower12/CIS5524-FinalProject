@@ -1,13 +1,19 @@
+import sys
 import praw
 import sqlite3
 
-DB_NAME = "user_data_2.db"
+if len(sys.argv) == 3:
+	# parse parameters
+	DB_NAME         = sys.argv[1]
+	KARMA_THRESHOLD = int(sys.argv[2])
+else:
+	# Defaults
+	DB_NAME = "test_data.db"
+	KARMA_THRESHOLD = 10
+
 conn = sqlite3.connect("data/{}".format(DB_NAME))
 db   = conn.cursor()
-
 reddit = praw.Reddit('polbot')
-
-comment_karma_threshold = 10
 
 for post in db.execute("SELECT * FROM posts WHERE processed=0").fetchall():
 	print("processing post: {}".format(post[1]))
@@ -16,7 +22,7 @@ for post in db.execute("SELECT * FROM posts WHERE processed=0").fetchall():
 	# Limits us to just top level comments.
 	s.comments.replace_more(limit=10, threshold=1)
 	for comment in s.comments:
-		if comment.score > comment_karma_threshold:
+		if comment.score > KARMA_THRESHOLD:
 			if comment.author != None:
 				name = comment.author.name
 				print("user comment over threshold: {}".format(name))

@@ -1,13 +1,23 @@
+import sys
 import praw
 import sqlite3
 import pickle
 
-### Major User Set Parameters
-PICKLE_FN = "user_edges.p"
-DB_NAME = "user_data_2.db"
+if len(sys.argv) > 1:
+	DB_NAME       = sys.argv[1]
+	COMMENT_LIMIT = int(sys.argv[2])
+	TYPE          = sys.argv[3]
+	IGNORE_SUBS   = []
+	for i in range(4, len(sys.argv)):
+		IGNORE_SUBS.append(sys.argv[i])
+else:
+	DB_NAME = "test_data.db"
+	TYPE = "new"
+	COMMENT_LIMIT = 5
+	IGNORE_SUBS = ['politics'] 
 
-COMMENT_LIMIT = 15
-IGNORE_SUBS = ['politics'] # These will be culled from the subreddit sets
+PICKLE_FN = DB_NAME[:-2]+"p"
+print(PICKLE_FN)
 
 # This will be filled with [username, {subreddit name list}] 
 user_edge_lists = []
@@ -22,7 +32,13 @@ for user in user_cursor:
 	try:
 		new_set = set()
 		print(user)
-		for comment in reddit.redditor(user[1]).comments.new(limit=COMMENT_LIMIT):
+		
+		if TYPE == "new":
+			collection = reddit.redditor(user[1]).comments.new(limit=COMMENT_LIMIT)
+		if TYPE == "controversial":
+			collection = reddit.redditor(user[1]).comments.controversial(limit=COMMENT_LIMIT)
+		
+		for comment in collection:
 			new_set.add(comment.subreddit.display_name)
 
 		for s in IGNORE_SUBS:
