@@ -31,12 +31,12 @@ import subprocess
 # 7 TYPE_USERS      - [new, controversial] - Type sort for user comments
 
 runs = [
-		["pol_300_year_05_20_new.db", 300, "year", "top", ["politics"], 5, 20, "new"],
-		["pol_300_year_05_20_con.db", 300, "year", "top", ["politics"], 5, 20, "controversial"],
-		["pol_300_year_10_20_new.db", 300, "year", "top", ["politics"], 10, 20, "new"],
-		["pol_300_year_10_20_con.db", 300, "year", "top", ["politics"], 10, 20, "controversial"],
-		["pol_300_year_00_20_new.db", 300, "year", "top", ["politics"], 0, 20, "new"],
-		["pol_300_year_00_20_con.db", 300, "year", "top", ["politics"], 0, 20, "controversial"],]
+		# ["pol_300_year_05_20_new.db", 300, "year", "top", ["politics"], 5, 20, "new"],
+		# ["pol_300_year_05_20_con.db", 300, "year", "top", ["politics"], 5, 20, "controversial"],
+		# ["pol_300_year_10_20_new.db", 300, "year", "top", ["politics"], 10, 20, "new"],
+		# ["pol_300_year_10_20_con.db", 300, "year", "top", ["politics"], 10, 20, "controversial"],
+		# ["pol_300_year_00_20_new.db", 300, "year", "top", ["politics"], 0, 20, "new"],
+		["pol_300_year_00_20_new.db", 300, "year", "top", ["politics"], 0, 50, "new"],]
 
 for run in runs:
 	# Create the database for the posts/users
@@ -51,19 +51,19 @@ for run in runs:
 	subs = subs[:-1]
 	
 	# Fetch Posts
-	subprocess.run(["python",
-					"data_collection/fetch_posts.py",
-					run[0],
-					str(run[1]),
-					run[2],
-					run[3],
-					subs])
+	# subprocess.run(["python",
+	# 				"data_collection/fetch_posts.py",
+	# 				run[0],
+	# 				str(run[1]),
+	# 				run[2],
+	# 				run[3],
+	# 				subs])
 
-	# Fetch Users
-	subprocess.run(["python",
-					"data_collection/fetch_users.py",
-					run[0],
-					str(run[5])])
+	# # Fetch Users
+	# subprocess.run(["python",
+	# 				"data_collection/fetch_users.py",
+	# 				run[0],
+	# 				str(run[5])])
 
 	# Process Users - This will save out a pickle file with a user-subreddit list
 	subprocess.run(["python",
