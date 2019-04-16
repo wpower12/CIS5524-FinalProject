@@ -92,3 +92,7 @@ print(A)
 print(D)
 print(L)
 
+# Now we get to do the rest! 
+# Scaled L to L'
+# Find l/r of the SVD of L'
+# Do k=2 clustering with the l/r vectors?

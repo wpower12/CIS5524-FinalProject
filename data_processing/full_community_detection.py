@@ -1,8 +1,9 @@
 import pickle
+import itertools
+import numpy as np
 import networkx as nx
 from networkx.algorithms import bipartite as bp
-from networkx.algorithms.community.centrality import girvan_newman
-import numpy as np
+from networkx.algorithms.community import *
 
 ### Parameters
 GRAPH_FN   = "50_new_weighted_SMALL_first2k_nxg" # Original Bipartite NX Graph
@@ -74,7 +75,17 @@ print("Saved UU projection graph to: results/{}.p".format(UU_PROJ_FN))
 
 # Running this for 2000 nodes should be interesting. 
 comms = girvan_newman(proj_graph)
-first_comm = tuple(sorted(c) for c in next(comms))
-pickle.dump(first_comm, open("results/{}.p".format(GNC_OBJ_FN), "wb"))
-print("Saved popo of the first community found by the GN algo.")
-print("to: {}".format(GNC_OBJ_FN))
+
+# first_comm = tuple(sorted(c) for c in next(comms))
+# print(first_comm)
+# pickle.dump(first_comm, open("results/{}.p".format(GNC_OBJ_FN), "wb"))
+# print("Saved popo of the first community found by the GN algo.")
+# print("to: {}".format(GNC_OBJ_FN))
+
+# Want to look at the k = 2 communities and find their performance
+limited = itertools.takewhile(lambda c: len(c) <= 2, comms)
+partitions = []
+for communities in limited:
+	perf = performance(proj_graph, communities)
+	print(perf)
+	partitions.append([communities, perf])
