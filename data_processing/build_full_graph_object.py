@@ -16,10 +16,11 @@ import networkx as nx
 from networkx.algorithms import bipartite as bp
 import numpy as np
 
-THRESH = 1000
+THRESH = 20000
+WEIGHTED = False
 
 data_fn = "pol_300_year_00_50_new_weighted.p"
-out_fn  = "SMALL_weighted_attrs.gexf"
+out_fn  = "full_NotWeighted_50"
 
 edge_list = pickle.load(open("data/{}".format(data_fn), "rb"))
 user_cnt = 0
@@ -32,9 +33,13 @@ for user in edge_list:
 		w = user[1][sub]
 		# Hacky way to avoid issues with a user 
 		# sharing a name with a subreddit.
-		graph.add_edge("U-"+user[0], "S-"+sub, weight=w)
+		if WEIGHTED:
+			graph.add_edge("U-"+user[0], "S-"+sub, weight=w)
+		else:
+			graph.add_edge("U-"+user[0], "S-"+sub)
 
 	if user_cnt > THRESH:
 		break
 
-nx.write_gexf(graph, out_fn)
+pickle.dump(graph, open("{}.p".format(out_fn), "wb"))
+nx.write_gexf(graph, "{}_gexf".format(out_fn))
