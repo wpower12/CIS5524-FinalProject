@@ -6,6 +6,7 @@ import numpy as np
 GRAPH_FN = "50_new_weighted_SMALL_first2k_nxg"
 
 graph = pickle.load(open("data/{}.p".format(GRAPH_FN), "rb"))
+
 a, b = bp.sets(graph)
 
 # hacky way to see which is the user set. 
