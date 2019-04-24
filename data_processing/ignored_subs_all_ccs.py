@@ -13,14 +13,17 @@ if len(sys.argv) > 1:
 else:
 	COUNT          = 5000 
 	MIN_EDGE_VALUE = 4
+
+
 EDGELIST_FN = "pol_300_year_00_50_new_weighted"
 IGNORE_SUBS_LISTS = [
-	    ["politics"],
+		["politics"],
 	    ["politics", "AskReddit", "worldnews", "news", "funny", "pics"],
 		["politics", "AskReddit", "worldnews", "news", "funny", "pics", "todayilearned", "gaming", "aww", "videos", "movies"],
 		["politics", "AskReddit", "worldnews", "news", "funny", "pics", "todayilearned", "gaming", "aww", "videos", "movies", "gifs", "PoliticalHumor", "Showerthoughts", "interestingasfuck", "WTF"],
 		["politics", "AskReddit", "worldnews", "news", "funny", "pics", "todayilearned", "gaming", "aww", "videos", "movies", "gifs", "PoliticalHumor", "Showerthoughts", "interestingasfuck", "WTF", "mildlyinteresting", "trashy", "unpopularopinion", "BlackPeopleTwitter", "technology"],
 		["politics", "AskReddit", "worldnews", "news", "funny", "pics", "todayilearned", "gaming", "aww", "videos", "movies", "gifs", "PoliticalHumor", "Showerthoughts", "interestingasfuck", "WTF", "mildlyinteresting", "trashy", "unpopularopinion", "BlackPeopleTwitter", "technology", "science", "PublicFreakout", "OldSchoolCool", "AmItheAsshole", "nottheonion", "relationship_advice", "MurderedByWords", "RoastMe", "WhitePeopleTwitter", "oddlysatisfying", "atheism", "AdviceAnimals", "insanepeoplefacebook", "memes", "television", "nba", "AskMen", "nfl", "Futurology", "Damnthatsinteresting"]]
+
 edge_list = pickle.load(open("data/{}.p".format(EDGELIST_FN), "rb"))
 print("opened edgelist from: data/{}.p".format(EDGELIST_FN))
 print("random draw of {}, threshold {}".format(COUNT, MIN_EDGE_VALUE))
@@ -89,13 +92,13 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 	# print("\t{} nodes, {} edges".format(uuproj_graph.vcount(),uuproj_graph.ecount()))
 	print("\t{}".format(components.summary()))
 
-	large_cc = components.giant()
-	print("\t{} nodes, {} edges:".format(large_cc.vcount(),large_cc.ecount()))
-	print("\t{} ave degree".format(ig.mean(large_cc.degree())))
+	print("\t{} nodes, {} edges:".format(uuproj_graph.vcount(),uuproj_graph.ecount()))
+	print("\t{} ave degree".format(ig.mean(uuproj_graph.degree())))
 
 	### Community Detection Algorithms
+	print("community detection, all ccs:")
 	## Fast Greedy
-	fg_vdendr = large_cc.community_fastgreedy()
+	fg_vdendr = uuproj_graph.community_fastgreedy()
 	print("\tCD - fast greedy dendrogram:")
 	print("\t opt cut: {}".format(fg_vdendr.optimal_count))
 	cut_oi = fg_vdendr.as_clustering(n=fg_vdendr.optimal_count)
@@ -104,10 +107,10 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 	## Leading Eigenvector
 	print("\tCD - Leading Eigenvector:")
 	for i in range(2, 5):
-		le_vclust = large_cc.community_leading_eigenvector(clusters=i)
+		le_vclust = uuproj_graph.community_leading_eigenvector(clusters=i)
 		print("\t  {} clusters: {}".format(i, le_vclust.q))
 
 	## Label Propogation
 	print("\tCD - Label Propogation:")
-	lp_vclust = large_cc.community_label_propagation()
-	print("\t mod: {}".format(lp_vclust.q))   
+	lp_vclust = uuproj_graph.community_label_propagation()
+	print("\t mod: {}".format(lp_vclust.q))

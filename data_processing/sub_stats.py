@@ -7,6 +7,7 @@ import itertools
 import pickle
 import numpy as np
 
+TOP_COUNT = 40
 EDGELIST_FN = "pol_300_year_00_50_new_weighted"
 
 el = pickle.load(open("data/{}.p".format(EDGELIST_FN), "rb"))
@@ -21,4 +22,9 @@ for user in el:
 		else:
 			sub_counts[sub] += 1
 
-print(sorted(sub_counts.items(), key=lambda kv: -1*kv[1])[:21])
+res = sorted(sub_counts.items(), key=lambda kv: -1*kv[1])[:(TOP_COUNT+1)]
+sorted_string = ""
+for count in res:
+	sorted_string += "\"{}\", ".format(count[0])
+
+print(sorted_string)

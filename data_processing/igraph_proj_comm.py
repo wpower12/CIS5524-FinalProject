@@ -8,9 +8,7 @@ import igraph as ig
 EDGELIST_FN = "pol_300_year_00_50_new_weighted"
 COUNT          = 5000 
 MIN_EDGE_VALUE = 4
-IGNORE_SUBS    = [
-				  ["politics"],
-				  ["politics", "AskReddit", "worldnews", "news"],]
+IGNORE_SUBS    = ["politics"]
 
 el = pickle.load(open("data/{}.p".format(EDGELIST_FN), "rb"))
 print("opened edgelist from: data/{}.p".format(EDGELIST_FN))
