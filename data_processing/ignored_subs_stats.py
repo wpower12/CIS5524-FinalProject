@@ -10,9 +10,12 @@ import igraph as ig
 if len(sys.argv) > 1:
 	COUNT = int(sys.argv[1])
 	MIN_EDGE_VALUE = int(sys.argv[2])
+	LOG_FN = sys.argv[3]
 else:
-	COUNT          = 5000 
-	MIN_EDGE_VALUE = 4
+	COUNT          = 500 
+	MIN_EDGE_VALUE = 3
+	LOG_FN = "is_summary_res"
+
 EDGELIST_FN = "pol_300_year_00_50_new_weighted"
 IGNORE_SUBS_LISTS = [
 	    ["politics"],
@@ -21,9 +24,16 @@ IGNORE_SUBS_LISTS = [
 		["politics", "AskReddit", "worldnews", "news", "funny", "pics", "todayilearned", "gaming", "aww", "videos", "movies", "gifs", "PoliticalHumor", "Showerthoughts", "interestingasfuck", "WTF"],
 		["politics", "AskReddit", "worldnews", "news", "funny", "pics", "todayilearned", "gaming", "aww", "videos", "movies", "gifs", "PoliticalHumor", "Showerthoughts", "interestingasfuck", "WTF", "mildlyinteresting", "trashy", "unpopularopinion", "BlackPeopleTwitter", "technology"],
 		["politics", "AskReddit", "worldnews", "news", "funny", "pics", "todayilearned", "gaming", "aww", "videos", "movies", "gifs", "PoliticalHumor", "Showerthoughts", "interestingasfuck", "WTF", "mildlyinteresting", "trashy", "unpopularopinion", "BlackPeopleTwitter", "technology", "science", "PublicFreakout", "OldSchoolCool", "AmItheAsshole", "nottheonion", "relationship_advice", "MurderedByWords", "RoastMe", "WhitePeopleTwitter", "oddlysatisfying", "atheism", "AdviceAnimals", "insanepeoplefacebook", "memes", "television", "nba", "AskMen", "nfl", "Futurology", "Damnthatsinteresting"]]
+
+def plog(str, fo):
+	print(str)
+	fo.write(str)
+
+log_file = open("results/{}.txt".format(LOG_FN), "w")
+
 edge_list = pickle.load(open("data/{}.p".format(EDGELIST_FN), "rb"))
-print("opened edgelist from: data/{}.p".format(EDGELIST_FN))
-print("random draw of {}, threshold {}".format(COUNT, MIN_EDGE_VALUE))
+plog("opened edgelist from: data/{}.p".format(EDGELIST_FN), log_file)
+plog("random draw of {}, threshold {}".format(COUNT, MIN_EDGE_VALUE), log_file)
 
 el = random.sample(edge_list, COUNT)
 
@@ -57,7 +67,7 @@ for user in el:
 
 # Bi-Adj Matrix for each set of ignored sups
 for IGNORE_SUBS in IGNORE_SUBS_LISTS:
-	print("Ignore top {} subs:".format(len(IGNORE_SUBS)-1))
+	plog("Ignore top {} subs:".format(len(IGNORE_SUBS)-1), log_file)
 
 	B = np.zeros((len(user_map), len(subs_map)), dtype=np.int16)
 	
@@ -76,7 +86,7 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 		if i >= COUNT:
 			break
 
-	print("\tbuilding projection: {}".format(np.count_nonzero(B)))
+	plog("\tbuilding projection: {}".format(np.count_nonzero(B)), log_file)
 
 	# Actual User-User Projection
 	padj = np.matmul(B, B.transpose()) 
@@ -87,27 +97,27 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 	components = uuproj_graph.components()
 
 	# print("\t{} nodes, {} edges".format(uuproj_graph.vcount(),uuproj_graph.ecount()))
-	print("\t{}".format(components.summary()))
+	plog("\t{}".format(components.summary()))
 
 	large_cc = components.giant()
-	print("\t{} nodes, {} edges:".format(large_cc.vcount(),large_cc.ecount()))
-	print("\t{} ave degree".format(ig.mean(large_cc.degree())))
+	plog("\t{} nodes, {} edges:".format(large_cc.vcount(),large_cc.ecount()), log_file)
+	plog("\t{} ave degree".format(ig.mean(large_cc.degree())), log_file)
 
 	### Community Detection Algorithms
 	## Fast Greedy
 	fg_vdendr = large_cc.community_fastgreedy()
-	print("\tCD - fast greedy dendrogram:")
-	print("\t opt cut: {}".format(fg_vdendr.optimal_count))
+	plog("\tCD - fast greedy dendrogram:", log_file)
+	plog("\t opt cut: {}".format(fg_vdendr.optimal_count), log_file)
 	cut_oi = fg_vdendr.as_clustering(n=fg_vdendr.optimal_count)
-	print("\t opt cut q: {}".format(cut_oi.q))
+	plog("\t opt cut q: {}".format(cut_oi.q), log_file)
 
 	## Leading Eigenvector
-	print("\tCD - Leading Eigenvector:")
+	plog("\tCD - Leading Eigenvector:", log_file)
 	for i in range(2, 5):
 		le_vclust = large_cc.community_leading_eigenvector(clusters=i)
-		print("\t  {} clusters: {}".format(i, le_vclust.q))
+		plog("\t  {} clusters: {}".format(i, le_vclust.q), log_file)
 
 	## Label Propogation
-	print("\tCD - Label Propogation:")
+	plog("\tCD - Label Propogation:", log_file)
 	lp_vclust = large_cc.community_label_propagation()
-	print("\t mod: {}".format(lp_vclust.q))   
+	plog("\t mod: {}".format(lp_vclust.q), log_file)   
