@@ -97,7 +97,7 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 	components = uuproj_graph.components()
 
 	# print("\t{} nodes, {} edges".format(uuproj_graph.vcount(),uuproj_graph.ecount()))
-	plog("\t{}".format(components.summary()))
+	plog("\t{}".format(components.summary()), log_file)
 
 	large_cc = components.giant()
 	plog("\t{} nodes, {} edges:".format(large_cc.vcount(),large_cc.ecount()), log_file)
