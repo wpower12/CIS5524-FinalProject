@@ -31,7 +31,7 @@ IGNORE_SUBS_LISTS = [
 
 def plog(str, fo):
 	print(str)
-	fo.write(str)
+	fo.write(str+"\n")
 
 log_file = open("results/{}.txt".format(LOG_FN), "w")
 edge_list = pickle.load(open("data/{}.p".format(EDGELIST_FN), "rb"))
@@ -133,7 +133,7 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 
 		plog("\t  representative subs for cc # {}, {} nodes:".format(cc_num, len(cc)), log_file)
 		for s in non_ignored_subs:
-			print("\t   {}, {}".format(s, non_ignored_subs[s]))
+			plog("\t   {}, {}".format(s, non_ignored_subs[s]), log_file)
 		cc_num += 1
 
 log_file.close()

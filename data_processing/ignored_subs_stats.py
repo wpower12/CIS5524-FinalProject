@@ -27,7 +27,7 @@ IGNORE_SUBS_LISTS = [
 
 def plog(str, fo):
 	print(str)
-	fo.write(str)
+	fo.write(str+"\n")
 
 log_file = open("results/{}.txt".format(LOG_FN), "w")
 
