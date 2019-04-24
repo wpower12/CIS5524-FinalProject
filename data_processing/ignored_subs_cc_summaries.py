@@ -92,14 +92,16 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 	# print(cc_sizes)
 	# print(list(components[0]))
 	components = sorted(list(components), key=lambda kv: len(kv))
+	components.reverse()
 
 	# Need to go from the user ID to a username, and then pull
 	# the users row in the edge list, find their subs, then
 	# remove the IGNORED_SUBS and print it out. 
 	print("\ttop {} connected components (by size):".format(TOP_N_COMPS))
+	cc_num = 0
 	for cc in itertools.islice(components,TOP_N_COMPS):
 		i = 0
-		non_ignored_subs = set()
+		non_ignored_subs = dict()
 		for user_id in cc:
 			user_id = cc[0]
 			un = uid_uname_map[user_id]
@@ -108,15 +110,20 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 				if user[0] == un:
 					subs = user[1]
 					break
-			non_ignored_subs = non_ignored_subs.union(subs)
+
+			for s in subs:
+				if s in IGNORE_SUBS:
+					break
+				if s not in non_ignored_subs:
+					non_ignored_subs[s] = 1
+				else:
+					non_ignored_subs[s] += 1
 			i += 1
 			if i >= NUM_USERS_FOR_SUM:
 				break
-				
-		non_ignored_subs = non_ignored_subs.difference(set(IGNORE_SUBS))
-		print("\t  representative subs for cc # {}, {} nodes:".format(i, len(cc)))
-		summary = ""
+
+		print("\t  representative subs for cc # {}, {} nodes:".format(cc_num, len(cc)))
 		for s in non_ignored_subs:
-			summary += "{} ".format(s)
-		print("\t {}".format(summary))
+			print("\t   {}, {}".format(s, non_ignored_subs[s]))
+		cc_num += 1
 
