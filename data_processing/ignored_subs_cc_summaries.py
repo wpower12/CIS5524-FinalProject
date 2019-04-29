@@ -11,13 +11,15 @@ if len(sys.argv) > 1:
 	COUNT = int(sys.argv[1])
 	MIN_EDGE_VALUE = int(sys.argv[2])
 	LOG_FN = sys.argv[3]
+	TOP_N_COMPS = int(sys.argv[4])	
+	NUM_USERS_FOR_SUM = int(sys.argv[5])
 else:
 	COUNT          = 500 
 	MIN_EDGE_VALUE = 3
 	LOG_FN = "cc_summary_res"
+	TOP_N_COMPS = 5	
+	NUM_USERS_FOR_SUM = 3000
 
-TOP_N_COMPS = 5	
-NUM_USERS_FOR_SUM = 5
 EDGELIST_FN = "pol_300_year_00_50_new_weighted"
 
 IGNORE_SUBS_LISTS = [

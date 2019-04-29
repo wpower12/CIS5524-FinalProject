@@ -15,6 +15,7 @@ else:
 EDGELIST_FN = "pol_300_year_00_50_new_weighted"
 edge_list = pickle.load(open("data/{}.p".format(EDGELIST_FN), "rb"))
 
+# Top 20 is our best data. so ignoring that amount.
 IGNORE_SUBS = ["politics", "AskReddit", "worldnews", "news", "funny", "pics", "todayilearned", "gaming", "aww", "videos", "movies", "gifs", "PoliticalHumor", "Showerthoughts", "interestingasfuck", "WTF"]	
 
 el = random.sample(edge_list, COUNT)
@@ -69,4 +70,3 @@ for sub in subs_map:
 
 bigraph.save(SAVE_FN, format="gml")
 print("saved file")
-print(bigraph) 
