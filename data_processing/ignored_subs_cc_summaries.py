@@ -14,7 +14,7 @@ if len(sys.argv) > 1:
 	TOP_N_COMPS = int(sys.argv[4])	
 	NUM_USERS_FOR_SUM = int(sys.argv[5])
 else:
-	COUNT          = 500 
+	COUNT          = 100 
 	MIN_EDGE_VALUE = 3
 	LOG_FN = "cc_summary_res"
 	TOP_N_COMPS = 5	
@@ -97,6 +97,7 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 
 	uuproj_graph = ig.Graph.Adjacency(clip_padj.tolist(), mode=ig.ADJ_MAX) 
 	components = uuproj_graph.components()
+	large_cc = components.giant()
 
 	# Need the CC's sorted by size.
 	# cc_sizes = components.sizes()
@@ -105,7 +106,6 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 	components = sorted(list(components), key=lambda kv: len(kv))
 	components.reverse()
 
-	large_cc = components.giant()
 	plog("\t{} Largest CC: nodes, {} edges:".format(large_cc.vcount(),large_cc.ecount()), log_file)
 	plog("\t{} ave degree".format(ig.mean(large_cc.degree())), log_file)
 
