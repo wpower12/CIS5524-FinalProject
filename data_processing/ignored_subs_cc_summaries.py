@@ -105,6 +105,30 @@ for IGNORE_SUBS in IGNORE_SUBS_LISTS:
 	components = sorted(list(components), key=lambda kv: len(kv))
 	components.reverse()
 
+	large_cc = components.giant()
+	plog("\t{} Largest CC: nodes, {} edges:".format(large_cc.vcount(),large_cc.ecount()), log_file)
+	plog("\t{} ave degree".format(ig.mean(large_cc.degree())), log_file)
+
+	### Community Detection Algorithms
+	## Fast Greedy
+	fg_vdendr = large_cc.community_fastgreedy()
+	plog("\tCD - fast greedy dendrogram:", log_file)
+	plog("\t opt cut: {}".format(fg_vdendr.optimal_count), log_file)
+	cut_oi = fg_vdendr.as_clustering(n=fg_vdendr.optimal_count)
+	plog("\t opt cut q: {}".format(cut_oi.q), log_file)
+
+	## Leading Eigenvector
+	plog("\tCD - Leading Eigenvector:", log_file)
+	for i in range(2, 5):
+		le_vclust = large_cc.community_leading_eigenvector(clusters=i)
+		plog("\t  {} clusters: {}".format(i, le_vclust.q), log_file)
+
+	## Label Propogation
+	plog("\tCD - Label Propogation:", log_file)
+	lp_vclust = large_cc.community_label_propagation()
+	plog("\t mod: {}".format(lp_vclust.q), log_file)   
+
+
 	# Need to go from the user ID to a username, and then pull
 	# the users row in the edge list, find their subs, then
 	# remove the IGNORED_SUBS and print it out. 
